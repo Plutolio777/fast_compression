@@ -1,0 +1,16 @@
+[project]
+name = "fast-compression"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyqt5==5.15.9",
+    "pyqt5-qt5==5.15.2",
+    "setuptools>=78.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyqt5-tools>=5.15.9.3.3",
+]

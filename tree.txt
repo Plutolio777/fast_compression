@@ -1,0 +1,28 @@
+smart_data_archiver/
+├── app/                    # PyQt5 用户界面
+│   ├── __init__.py
+│   ├── main_window.py       # 主要UI界面
+│   └── ui_components.py     # 其他UI组件
+├── compress/               # 压缩相关功能
+│   ├── __init__.py
+│   ├── algorithms.py        # 存储常见的压缩算法
+│   ├── file_compressor.py   # 文件压缩/解压的实现
+│   └── strategy.py          # 压缩策略管理
+├── storage/                # 存储相关功能
+│   ├── __init__.py
+│   ├── local_storage.py     # 本地存储处理
+│   ├── archive_manager.py   # 存档管理
+│   └── storage_strategy.py  # 存储策略
+├── tasks/                  # 后台任务
+│   ├── __init__.py
+│   ├── archiver_task.py     # 后台归档任务
+│   ├── compress_task.py     # 后台压缩任务
+│   └── progress_tracker.py  # 任务进度跟踪
+├── config/                 # 配置文件
+│   └── settings.py          # 系统配置信息
+├── utils/                  # 工具函数
+│   ├── __init__.py
+│   ├── file_utils.py        # 文件操作相关函数
+│   └── compression_utils.py # 压缩算法辅助函数
+├── requirements.txt        # 项目依赖
+└── main.py                 # 入口文件
