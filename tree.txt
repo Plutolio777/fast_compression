@@ -1,4 +1,5 @@
 smart_data_archiver/
+├── data/                    # 文件存储目录
 ├── app/                    # PyQt5 用户界面
 │   ├── __init__.py
 │   ├── main_window.py       # 主要UI界面
