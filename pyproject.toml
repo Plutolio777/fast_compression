@@ -5,12 +5,15 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "pyqt5==5.15.9",
+    "numpy>=2.2.4",
+    "pyqt-siliconui>=0.0.1",
+    "pyqt5==5.15.10",
     "pyqt5-qt5==5.15.2",
     "setuptools>=78.1.0",
 ]
 
 [dependency-groups]
-dev = [
-    "pyqt5-tools>=5.15.9.3.3",
-]
+dev = []
+
+[tool.uv.sources]
+pyqt-siliconui = { git = "https://github.com/ChinaIceF/PyQt-SiliconUI.git" }
