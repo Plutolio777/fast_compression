@@ -1,45 +1,63 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
 
+from PyQt5.QtCore import Qt
 from siui.components import SiPixLabel
-from siui.components.button import SiPushButtonRefactor
 from siui.components.option_card import SiOptionCardLinear, SiOptionCardPlane
 from siui.components.page import SiPage
-from siui.components.slider import SiSliderH
 from siui.components.titled_widget_group import SiTitledWidgetGroup
 from siui.components.widgets import (
     SiDenseHContainer,
     SiDenseVContainer,
     SiLabel,
-    SiLineEdit,
     SiLongPressButton,
     SiPushButton,
     SiSimpleButton,
-    SiSwitch,
 )
-from siui.core import GlobalFont, Si, SiColor, SiGlobal, SiQuickEffect, GlobalFontSize
+from siui.core import GlobalFont, Si, SiColor, SiGlobal
 from siui.gui import SiFont
 
 from .components.themed_option_card import ThemedOptionCardPlane
+from .components.upload_panel import UploadPanel
+from .components.zip_task_panel import ZipTaskPanel
 
 
 class ExampleHomepage(SiPage):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # 滚动区域
+        self.titled_widget_group = None
+        self.option_card_example = None
+        self.option_card_project = None
+        self.container_for_cards = None
+        self.subtitle = None
+        self.title = None
+        self.background_fading_transition = None
+        self.background_image = None
+        self.head_area = None
+        self.body_area = None
         self.scroll_container = SiTitledWidgetGroup(self)
+        self.setup_header()
+        self.setup_header_cards()
 
+        # 添加到滚动区域容器
+        self.scroll_container.addWidget(self.head_area)
+        self.setup_body()
+        self.setup_body_group()
+        self.scroll_container.addWidget(self.body_area)
+        # 添加到页面
+        self.setAttachment(self.scroll_container)
+
+    def setup_header(self):
         # 整个顶部
         self.head_area = SiLabel(self)
         self.head_area.setFixedHeight(450)
-
         # 创建背景底图和渐变
         self.background_image = SiPixLabel(self.head_area)
         self.background_image.setFixedSize(1366, 300)
         self.background_image.setBorderRadius(6)
         self.background_image.load("./img/homepage_background.png")
-
         self.background_fading_transition = SiLabel(self.head_area)
         self.background_fading_transition.setGeometry(0, 100, 0, 200)
         self.background_fading_transition.setStyleSheet(
@@ -48,7 +66,6 @@ class ExampleHomepage(SiPage):
             """.format(SiGlobal.siui.colors["INTERFACE_BG_B"],
                        SiColor.trans(SiGlobal.siui.colors["INTERFACE_BG_B"], 0))
         )
-
         # 创建大标题和副标题
         self.title = SiLabel(self.head_area)
         self.title.setGeometry(64, 0, 500, 128)
@@ -64,6 +81,7 @@ class ExampleHomepage(SiPage):
         self.subtitle.setStyleSheet("color: {}".format(SiColor.trans(SiGlobal.siui.colors["TEXT_A"], 0.9)))
         self.subtitle.setFont(SiFont.tokenized(GlobalFont.S_MEDIUM))
 
+    def setup_header_cards(self):
         # 创建一个水平容器
         self.container_for_cards = SiDenseHContainer(self.head_area)
         self.container_for_cards.move(0, 130)
@@ -93,16 +111,13 @@ class ExampleHomepage(SiPage):
         self.container_for_cards.addWidget(self.option_card_project)
         self.container_for_cards.addWidget(self.option_card_example)
 
-        # 添加到滚动区域容器
-        self.scroll_container.addWidget(self.head_area)
-
-        # SiQuickEffect.applyDropShadowOn(self.container_for_cards, color=(0, 0, 0, 80), blur_radius=48)
-
+    def setup_body(self):
         # 下方区域标签
         self.body_area = SiLabel(self)
         self.body_area.setSiliconWidgetFlag(Si.EnableAnimationSignals)
         self.body_area.resized.connect(lambda _: self.scroll_container.adjustSize())
 
+    def setup_body_group(self):
         # 下面的 titledWidgetGroups
         self.titled_widget_group = SiTitledWidgetGroup(self.body_area)
         self.titled_widget_group.setSiliconWidgetFlag(Si.EnableAnimationSignals)
@@ -123,10 +138,6 @@ class ExampleHomepage(SiPage):
 
         # 添加到滚动区域容器
         self.body_area.setFixedHeight(self.titled_widget_group.height())
-        self.scroll_container.addWidget(self.body_area)
-
-        # 添加到页面
-        self.setAttachment(self.scroll_container)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -143,6 +154,7 @@ class WidgetsExampleOptionCardPlane(SiOptionCardPlane):
 
 
 class WidgetsExamplePanel(SiDenseVContainer):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setAdjustWidgetsSize(True)
@@ -155,46 +167,25 @@ class WidgetsExamplePanel(SiDenseVContainer):
 
         # 上面的两个选项卡，按钮和开关
         # 按钮
-        self.option_card_button = WidgetsExampleOptionCardPlane(self)
-        self.option_card_button.setTitle("智能压缩")
-        self.option_card_button.body().setSpacing(5)
-
-        option_card_button_container_h = SiDenseHContainer(self)
-        option_card_button_container_h.setFixedHeight(32)
-
-        button_a = SiPushButton(self)
-        button_a.resize(128, 32)
-        button_a.attachment().setText("Push Button")
-
-        button_b = SiPushButton(self)
-        button_b.resize(128, 32)
-        button_b.setUseTransition(True)
-        button_b.attachment().setText("Themed")
-
-        button_c = SiLongPressButton(self)
-        button_c.resize(128, 32)
-        button_c.attachment().setText("Hold-to-Confirm")
-
-        option_card_button_container_h.addWidget(button_a)
-        option_card_button_container_h.addWidget(button_b)
-        option_card_button_container_h.addWidget(button_c)
+        self.upload_card = WidgetsExampleOptionCardPlane(self)
+        self.upload_card.setTitle("智能压缩")
+        self.upload_card.body().setSpacing(5)
 
         self.upload_panel = UploadPanel(self)
+        self.upload_card.body().addWidget(self.upload_panel)
+        self.task_panel = ZipTaskPanel(self)
+        self.upload_card.body().addWidget(self.task_panel)
 
-        self.option_card_button.body().addWidget(self.upload_panel)
-        self.option_card_button.body().addWidget(option_card_button_container_h)
-
-        container_h_a.addWidget(self.option_card_button)
+        container_h_a.addWidget(self.upload_card)
         # 添加两个水平容器到自己
 
         self.addWidget(container_h_a)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        print(event.size())
-        self.option_card_button.setFixedWidth(event.size().width())
-        print(self.option_card_button.container.width())
-        self.upload_panel.setFixedWidth(event.size().width() - self.option_card_button.spacing())
+        self.upload_card.setFixedWidth(event.size().width())
+        self.upload_panel.setFixedWidth(event.size().width() - self.upload_card.spacing())
+        self.task_panel.setFixedWidth(event.size().width() - self.upload_card.spacing())
         # self.option_card_slider.setFixedWidth(event.size().width() - 300 - 16)
 
 
@@ -283,60 +274,3 @@ class OptionCardsExamplePanel(SiDenseVContainer):
         container_v_button.addWidget(button_description)
 
         self.addWidget(container_v_button)
-
-
-class UploadPanel(SiLabel):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.spacing_ = 24
-        # self.setFixedHeight(100)
-        self.setFixedHeight(300)
-        self.setCursor(Qt.PointingHandCursor)
-
-        # 构建组成外观的控件
-        self.outfit_label_lower = SiLabel(self)
-        self.outfit_label_lower.setFixedStyleSheet("border: 1.5px dashed #3b373f; border-radius: 12px")
-        # self.outfit_label_lower.setFixedStyleSheet("border-radius: 6px")
-        # self.outfit_label_lower.setFixedStyleSheet("border-radius: 6px")
-
-        self.outfit_label_upper = SiLabel(self)
-        self.outfit_label_upper.setFixedStyleSheet("border: 1.5px dashed #3b373f; border-radius: 12px")
-
-        self.demo_simple_button_a = SiSimpleButton(self)
-        self.demo_simple_button_a.resize(96, 32)
-        self.demo_simple_button_a.attachment().load(
-            b'<svg t="1744106682523" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4422" width="64" height="64"><path d="M239.317333 810.666667l-8.533333-1.28C173.226667 801.152 128 750.805333 128 689.152c0-51.157333 31.146667-94.72 75.050667-112.725333L256.170667 554.666667 256 495.36a213.333333 213.333333 0 0 1 420.437333-51.328l15.189334 61.354667 63.104 3.370666C832.853333 512.853333 896 578.346667 896 659.584c0 84.053333-67.413333 151.04-149.333333 151.04H725.333333v85.333333h21.333334c129.621333 0 234.666667-105.813333 234.666666-236.373333 0-126.293333-98.304-229.461333-222.08-236.074667A298.666667 298.666667 0 0 0 170.666667 495.488v1.962667a206.933333 206.933333 0 0 0-128 191.658666c0 104.192 76.458667 190.421333 175.957333 204.8v2.048H298.666667v-85.333333H239.317333z" fill="#bfbfbf" p-id="4423"></path><path d="M512 512l219.477333 219.477333h-120.704L512 632.618667l-98.858667 98.858666H292.522667L512 512z" fill="#bfbfbf" p-id="4424"></path><path d="M554.666667 597.333333v298.666667h-85.333334v-298.666667h85.333334z" fill="#bfbfbf" p-id="4425"></path></svg>')
-        self.demo_simple_button_a.attachment().setSvgSize(64, 64)
-        self.demo_simple_button_a.setHint("点击上传文件")
-        self.demo_simple_button_a.setBorderRadius(12)
-
-    def adjustSize(self):
-        print(1)
-        self.resize(self.width(), 3)
-
-    def reloadStyleSheet(self):
-        print(2)
-        super().reloadStyleSheet()
-
-        self.outfit_label_lower.setStyleSheet("background-color: {}".format(SiGlobal.siui.colors["INTERFACE_BG_C"]))
-        self.outfit_label_upper.setStyleSheet("background-color: {}".format(SiGlobal.siui.colors["INTERFACE_BG_C"]))
-
-    def spacing(self):
-        print(3)
-        """
-        获取容器与边缘左右的间隔
-        :return: 间隔
-        """
-        return self.spacing_
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        size = event.size()
-        print(size)
-        w, h = size.width(), size.height()
-        print(w, h)
-        self.demo_simple_button_a.setGeometry(0, 0, w-32, h)
-
-        self.outfit_label_lower.setGeometry(0, 8, w-32, h-8)  # 防止上边出现底色毛边
-        self.outfit_label_upper.resize(w-32, h)
